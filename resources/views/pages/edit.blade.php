@@ -1,6 +1,6 @@
 @extends('layouts.navbar');
 @section('content')
-<form method="POST" action="{{route('update', $task->id)}}">
+<form method="POST" action="{{route('update', $task->id)}}" style="margin-left:1%;margin-top:2%; width:40%;">
     @csrf
     @method('PUT')
     <div class="mb-3">
@@ -11,21 +11,22 @@
         <label  class="form-label">Description:</label>
         <textarea name="description" class="form-control"  rows="3">{{$task->description}}</textarea>
     </div>
-    <div class="mb-3">
-        <label  class="form-label">Status</label>
-        <select name="status"  >
+    <div class="mb-3" style="display: flex">
+        <label  class="form-label" style="margin-right: 1%;margin-top:1%;">Status</label>
+        <select name="status"  class="select form-control" style="width:180px">
             <option value="Pending" {{ $task->status == 'Pending' ? 'selected' : '' }}>Pending</option>
         <option value="Completed" {{ $task->status == 'Completed' ? 'selected' : '' }}>Completed</option>
         </select>
     </div>
-    <div class="mb-3">
-        <label  class="form-label">Deadline</label>
-        <a href="#!" data-mdb-tooltip-init title="Set due date" style="margin-left:20px">
+    <label  class="form-label">Deadline</label>
+    <div class="mb-3" style="display: flex">
+        <input type="text" class="form-control datepicker" id="datepicker" name="picker" placeholder="Select date" value="{{ old('picker') }}"readonly style="width: 180px;">
+        
+        <a href="#!" data-mdb-tooltip-init title="Set due date" style="margin-left:20px;margin-top:2.5%;">
             <i class="fas fa-calendar-alt fa-lg me-3 datepicker-trigger"></i>
         </a>
-        <input type="text" class="form-control datepicker" id="datepicker" name="picker" placeholder="Select date" value="{{ old('picker') }}" hidden>
         
-    </div>
+    </div><br>
 
     <button class="btn btn-primary" type="submit">Update</button>
 </form>
