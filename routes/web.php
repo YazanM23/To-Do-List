@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -16,5 +18,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/tasks', [TaskController::class, 'getAllTasks'])->name('tasks');
+Route::get('/tasks/{id}/view', [TaskController::class, 'getTaskDetails'])->name('view');
+Route::delete('/tasks/{id}/delete', [TaskController::class, 'deleteTask'])->name('delete');
+Route::post('/tasks', [TaskController::class, 'createTask'])->name('add');
+Route::get('/tasks/{id}/edit', [TaskController::class, 'editTaskDetails'])->name('edit');
+Route::put('/tasks/{id}/update', [TaskController::class, 'updateTaskDetails'])->name('update');
+Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus'])->name('updateStatus');
+Route::get('/filter', [TaskController::class, 'filterTasks'])->name('filter');
+Route::get('/search', [TaskController::class, 'searchTasks'])->name('search');
 
 require __DIR__.'/auth.php';
