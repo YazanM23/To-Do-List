@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Tasks;
 use Illuminate\Console\Command;
 
-class ExampleCommand extends Command
+class CleanUP extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:example-command';
+    protected $signature = 'app:clean-u-p';
 
     /**
      * The console command description.
@@ -25,6 +26,11 @@ class ExampleCommand extends Command
      */
     public function handle()
     {
-        logger()->info("executing");
+        //
+        $date = \Carbon\Carbon::now()->subDays(60)->format('Y-m-d');
+        $task = Tasks::where('updated_at', $date)->where('status', 'Pending')->get();
+        foreach ($task as $task) {
+            $task->delete();
+        }
     }
 }
