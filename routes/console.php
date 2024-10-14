@@ -13,7 +13,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 
-Schedule::command(ExampleCommand::class)->everyMinute();
+
 Schedule::command(CleanUp::class)->daily();
 Schedule::command(ArchiveCommand::class)->daily();
 Schedule::command(Reminder::class)->daily();

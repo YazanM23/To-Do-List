@@ -31,7 +31,7 @@ class ArchiveCommand extends Command
     {
         //
         $date = \Carbon\Carbon::now()->subDays(30)->format('Y-m-d');
-        $tasks = Tasks::where('updated_at', '<', $date)->where('status', 'Completed')->get();
+        $tasks = Tasks::where('completed_at', '<', $date)->where('status', 'Completed')->get();
         foreach ($tasks as $task) {
             $archive = new Archive;
             $archive->user_id = $task->user_id;

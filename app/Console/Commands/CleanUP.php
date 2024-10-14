@@ -27,8 +27,8 @@ class CleanUP extends Command
     public function handle()
     {
         //
-        $date = \Carbon\Carbon::now()->subDays(60)->format('Y-m-d');
-        $task = Tasks::where('updated_at', $date)->where('status', 'Pending')->get();
+        $date = \Carbon\Carbon::now()->subDays(60);
+        $task = Tasks::where('updated_at', '<', $date)->where('status', 'Pending')->get();
         foreach ($task as $task) {
             $task->delete();
         }

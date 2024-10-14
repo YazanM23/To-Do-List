@@ -103,9 +103,11 @@ class TaskController extends Controller
 
             if ($task->status == 'Pending') {
                 $task->status = 'Completed';
+                $task->completed_at = \Carbon\Carbon::now();
             } else {
                 $task->status = 'Pending';
             }
+
             $task->save();
         }
 
