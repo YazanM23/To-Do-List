@@ -11,7 +11,7 @@
             <p class="card-text">Description: {{$task->description}}</p>
             <br>
             <hr>
-            <p class="card-text" >Due Date: {{$task->deadline}}</p>
+            <p class="card-text" >Deadline Date: {{$task->deadline}}</p>
             <p class="card-text">Created At: {{$task->created_at}}</p>
             <p class="card-text" >Updated At: {{$task->updated_at}}</p>
      

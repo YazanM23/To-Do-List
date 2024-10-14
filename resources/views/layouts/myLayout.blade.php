@@ -19,16 +19,16 @@
                                         @csrf
                                         <div class="d-flex flex-row align-items-center" style="width: 100%;">
                                             <div style="width: 100%;">
-                                                <!-- Title input -->
+                                          
                                                 <input type="text" class="form-control form-control-lg" name="title" id="exampleFormControlInput1"
                                                        placeholder="New Title...">
                                                 <br>
-                                                <!-- Description input -->
+                                            
                                                 <textarea class="form-control form-control-lg" name="description" id="exampleFormControlTextarea1" placeholder="Description..." rows="2"></textarea>
                                             </div>
 
-                                            <!-- Datepicker icon with input -->
-                                            <a href="#!" data-mdb-tooltip-init title="Set due date" style="margin-left:20px">
+                                           
+                                            <a href="#!" data-mdb-tooltip-init title="Set deadline date" style="margin-left:20px">
                                                 <i class="fas fa-calendar-alt fa-lg me-3 datepicker-trigger"></i>
                                             </a>
                                             <input type="text" class="form-control datepicker" id="datepicker" name="picker" placeholder="Select date" hidden value=" ">
