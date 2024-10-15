@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Tasks;
+use App\Models\Reminders;
 use Illuminate\Support\Facades\Log;
 
 use Illuminate\Console\Command;
@@ -28,15 +29,14 @@ class Reminder extends Command
      */
     public function handle()
     {
-        //
-        $date = \Carbon\Carbon::now()->addDay()->format('Y-m-d');
 
-        $tasks = Tasks::where('deadline', $date)->get();
+        $date = \Carbon\Carbon::now()->addDay()->format('Y-m-d');
+        $tasks = Tasks::where('deadline', $date)->where('status', 'Pending')->get();
 
         foreach ($tasks as $task) {
-
-            $this->info("Reminder: {$task->title} is due today");
-            Log::info("Reminder: {$task->title} is due today");
+            $reminder = new Reminders;
+            $reminder->task_id = $task->id;
+            $reminder->save();
         }
     }
 }

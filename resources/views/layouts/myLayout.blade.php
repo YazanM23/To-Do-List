@@ -11,6 +11,9 @@
                             <i class="fas fa-check-square me-1"></i>
                             <u>To-Do List</u>
                         </p>
+                      @foreach ($Reminder as $reminder)
+                      <label>Reminder:{{$reminder->title}} </label><br>
+                      @endforeach
 
                         <div class="pb-2">
                             <div class="card">
@@ -115,7 +118,6 @@
                         @endif
 
                         @endforeach
-                        
                     </div>
                 </div>
             </div>

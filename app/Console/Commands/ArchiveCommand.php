@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\ArchiveController;
 use Illuminate\Console\Command;
 use App\Models\Archive;

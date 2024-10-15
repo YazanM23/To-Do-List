@@ -2,18 +2,19 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Facades\Log;
 use App\Models\Tasks;
+use App\Models\Reminders;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
-class CleanUP extends Command
+class removeReminder extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:clean-u-p';
+    protected $signature = 'app:remove-reminder';
 
     /**
      * The console command description.
@@ -28,11 +29,16 @@ class CleanUP extends Command
     public function handle()
     {
         //
-        $date = \Carbon\Carbon::now()->subDays(60);
-        $tasks = Tasks::where('updated_at', '<', $date)->where('status', 'Pending')->get();
+        $date = \Carbon\Carbon::now()->subDay()->format('Y-m-d');
+
+        $tasks = Tasks::where('deadline', $date)->get();
 
         foreach ($tasks as $task) {
-            $task->delete();
+            $reminder = Reminders::where('task_id', $task->id)->first();
+
+            if ($reminder) {
+                $reminder->delete();
+            }
         }
     }
 }

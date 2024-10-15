@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tasks;
 use App\Models\User;
+use App\Models\Reminders;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -19,12 +20,24 @@ class TaskController extends Controller
         if ($user != null) {
             $tasks = Tasks::where('user_id', $user->id)->get();
         } else {
-            return error('Please Login');
+            return response()->json(['error' => 'Please Login']);
         }
-        if ($tasks) {
 
-            return view('layouts.myLayout', ['data' => $tasks]);
+        if ($tasks) {
+            $reminders = Reminders::all();
+            $reminderTasks = [];
+
+            foreach ($reminders as $reminder) {
+                $task = Tasks::where('id', $reminder->task_id)->first();
+                if ($task) {
+                    $reminderTasks[] = $task;
+                }
+            }
+
+            return view('layouts.myLayout', ['data' => $tasks, 'Reminder' => $reminderTasks]);
         }
+
+
         return view('layouts.myLayout');
     }
 
@@ -45,6 +58,10 @@ class TaskController extends Controller
     {
         $task = Tasks::where('id', $id)->first();
         if ($task) {
+            $reminder = Reminders::where('task_id', $task->id);
+            if ($reminder) {
+                $reminder->delete();
+            }
             $task->delete();
         }
         return to_route('tasks');
