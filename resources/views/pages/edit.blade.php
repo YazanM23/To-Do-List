@@ -30,5 +30,14 @@
 
     <button class="btn btn-primary" type="submit">Update</button>
 </form>
+@if($task->files!=null)
+<form action="{{route('deleteFile', $task->id)}}" method="POST">
+    @csrf
+    @method('DELETE')
+    <input type="hidden" name="file" value="{{$task->files}}">
+    <button class="btn btn-danger" type="submit">Delete File</button>
+</form>
+
+@endif
 
 @endsection

@@ -36,6 +36,7 @@ class Reminder extends Command
         foreach ($tasks as $task) {
             $reminder = new Reminders;
             $reminder->task_id = $task->id;
+            $reminder->user_id = $task->user_id;
             $reminder->save();
         }
     }

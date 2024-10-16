@@ -14,6 +14,29 @@
             <p class="card-text" >Deadline Date: {{$task->deadline}}</p>
             <p class="card-text">Created At: {{$task->created_at}}</p>
             <p class="card-text" >Updated At: {{$task->updated_at}}</p>
+            @if ($task->files)
+                file:{{$task->files}}<br>
+                @if($task->file_type=='jpg'||$task->file_type=='jpeg'||$task->file_type=='png')
+               <img src="{{ asset("storage/$task->files") }}" style="width:200px;height:200px">
+
+</from>
+
+
+                extension:{{$task->file_type}}
+                @endif
+                @if(($task->file_type=='pdf'||$task->file_type=='docx'))
+                <iframe src="{{ asset("storage/$task->files") }}" width="100%" height="600px"></iframe>
+
+                @endif
+                <br>
+                <br>
+                <form method="POST" action="{{route('download',$task->id)}}">
+                    @csrf
+                    <input type="hidden" name="file" value="{{$task->files}}">
+                    <button type="submit" class="btn btn-success">Download File</button>
+                </form>
+            @endif
+           
      
         </div>
     </div>

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->enum('status', ['Pending', 'Completed']);
             $table->date('deadline');
             $table->date('completed_at')->nullable();
+            $table->string('files')->nullable();
+            $table->string('file_type')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

@@ -11,33 +11,35 @@
                             <i class="fas fa-check-square me-1"></i>
                             <u>To-Do List</u>
                         </p>
+                      
                       @foreach ($Reminder as $reminder)
-                      <label>Reminder:{{$reminder->title}} </label><br>
+                          <label>Reminder: {{ $reminder->title }} </label><br>
                       @endforeach
 
                         <div class="pb-2">
                             <div class="card">
                                 <div class="card-body">
-                                    <form action="{{route('add')}}" method="POST">
+                                    <form id="upload-form" action="{{ route('add') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="d-flex flex-row align-items-center" style="width: 100%;">
                                             <div style="width: 100%;">
-                                          
                                                 <input type="text" class="form-control form-control-lg" name="title" id="exampleFormControlInput1"
                                                        placeholder="New Title...">
                                                 <br>
                                             
-                                                <textarea class="form-control form-control-lg" name="description" id="exampleFormControlTextarea1" placeholder="Description..." rows="2"></textarea>
+                                                <textarea class="form-control form-control-lg" name="description" id="exampleFormControlTextarea1" placeholder="Description..." rows="2"></textarea><br>
+                                            
+                                                <input type="file" id="idFile" name="file" accept=".jpg,.jpeg,.png,.pdf,.docx" onchange="validationCheck()">
+                                                <label id="statusLabel"></label>
                                             </div>
-
-                                           
+                                            
                                             <a href="#!" data-mdb-tooltip-init title="Set deadline date" style="margin-left:20px">
                                                 <i class="fas fa-calendar-alt fa-lg me-3 datepicker-trigger"></i>
                                             </a>
                                             <input type="text" class="form-control datepicker" id="datepicker" name="picker" placeholder="Select date" hidden value=" ">
 
                                             <div>
-                                                <button type="submit" class="btn btn-primary">Add</button>
+                                                <button type="submit" class="btn btn-primary" id="addButton" >Add</button>
                                             </div>
                                         </div>
                                     </form>
@@ -49,7 +51,7 @@
 
                         <div class="d-flex justify-content-end align-items-center mb-4 pt-2 pb-3">
                             <p class="small mb-0 me-2 text-muted">Filter</p>
-                            <form method="GET" action="{{route('filter')}}" style="width: 360px; display: flex;">
+                            <form method="GET" action="{{ route('filter') }}" style="width: 360px; display: flex;">
                                 <select style="width: 180px;" class="select form-control" name="status" onchange="this.form.submit()">
                                     <option value="All" {{ request('status') == 'All' ? 'selected' : '' }}>All</option>
                                     <option value="Completed" {{ request('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
@@ -69,7 +71,7 @@
                             </form>
                         </div>
 
-                        <!-- Loop through tasks -->
+
                         @foreach ($data as $task)
                         <ul class="list-group list-group-horizontal rounded-0 bg-transparent">
                             <li class="list-group-item d-flex align-items-center ps-0 pe-3 py-1 rounded-0 border-0 bg-transparent">
@@ -112,7 +114,7 @@
                         </ul>
 
                         @if (\Carbon\Carbon::now()->format('Y-m-d') == \Carbon\Carbon::parse($task->deadline)->format('Y-m-d'))
-                            <div class="alert alert-warning mt-2">
+                            <div class="alert alert-warning mt-2" style="font-weight: bold; color: red;">
                                 Reminder: The deadline for this task is today!
                             </div>
                         @endif
@@ -124,6 +126,7 @@
         </div>
     </div>
 </section>
+
 
 <script>
     document.getElementById('toggleSort').addEventListener('click', function (event) {
@@ -143,5 +146,33 @@
 
         this.closest('form').submit();
     });
+</script>
+
+
+<script>
+ function validationCheck(){
+    var file = document.getElementById("idFile").files[0];
+    var fileExtension = file.name.split('.').pop();
+    if (file) { 
+      var fileSize = file.size*0.000001;
+      if((fileSize>1 || fileSize<0.5)&& (fileExtension=='jpg' || fileExtension=='png' || fileExtension=='jpeg') ){
+        addButton.disabled = true;
+        document.getElementById("statusLabel").innerHTML ="Your file should be 0.5-1 MB "+" Your File size: " + fileSize + "MB ";
+      }
+      else if(fileSize>2 && (fileExtension=='pdf' || fileExtension=='docx')){
+        addButton.disabled = true;
+        document.getElementById("statusLabel").innerHTML ="Your file should be 0-2 MB "+" Your File size: " + fileSize + "MB ";
+
+      }
+      else{
+        addButton.disabled = false;
+        document.getElementById("statusLabel").innerHTML ="";
+      }
+      
+    } else {
+      document.getElementById("statusLabel").innerHTML = "No file selected";
+    }
+  }
+
 </script>
 @endsection

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Reminders;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 use View;
 use function Laravel\Prompts\error;
@@ -16,6 +17,7 @@ class TaskController extends Controller
     //
     function getAllTasks()
     {
+
         $user = Auth::user();
         if ($user != null) {
             $tasks = Tasks::where('user_id', $user->id)->get();
@@ -28,7 +30,7 @@ class TaskController extends Controller
             $reminderTasks = [];
 
             foreach ($reminders as $reminder) {
-                $task = Tasks::where('id', $reminder->task_id)->first();
+                $task = Tasks::where('id', $reminder->task_id)->where('user_id', $user->id)->first();
                 if ($task) {
                     $reminderTasks[] = $task;
                 }
@@ -45,9 +47,16 @@ class TaskController extends Controller
     {
         $task = Tasks::where('id', $id)->first();
         if ($task) {
+            $file = [];
             $user = Auth::user();
             $userInfo = User::where('id', $user->id)->first();
-            return view('pages.view', ['task' => $task, 'user' => $userInfo]);
+
+            if ($task->files) {
+                $file = Storage::get("$task->files");
+            }
+
+
+            return view('pages.view', ['task' => $task, 'user' => $userInfo, 'image', 'file' => $file]);
         }
         return view('pages.view');
     }
@@ -62,6 +71,7 @@ class TaskController extends Controller
             if ($reminder) {
                 $reminder->delete();
             }
+
             $task->delete();
         }
         return to_route('tasks');
@@ -80,6 +90,28 @@ class TaskController extends Controller
 
             $task->deadline = \Carbon\Carbon::createFromFormat('d/m/Y', $request->picker)->format('Y-m-d');
 
+            if ($request->file) {
+
+                $filereq = $request->file;
+
+                $fileExtension = $filereq->getClientOriginalExtension();
+
+                if ($fileExtension == 'jpg' || $fileExtension == 'jpeg' || $fileExtension == 'png') {
+                    $request->validate(['file' => 'required|file|mimes:jpg,png,jpeg|max:2048|min:512']);
+                } else {
+
+                    try {
+                        $request->validate([
+                            'file' => 'required|file|mimes:pdf,docx|max:2048'
+                        ]);
+                    } catch (\Illuminate\Validation\ValidationException $e) {
+                        @dd(ini_get(option: 'upload_max_filesize'), ini_get('post_max_size'));
+                    }
+                }
+                $filesStorage =  Storage::putFile('myStorage', $filereq);
+                $task->files = $filesStorage;
+                $task->file_type = $fileExtension;
+            }
             $task->save();
         }
         return to_route('tasks');
@@ -140,13 +172,22 @@ class TaskController extends Controller
         $sort = $request->input('sort');
         $sort_order = $request->input('sort_order');
 
+        $reminders = Reminders::all();
+        $reminderTasks = [];
+
+        foreach ($reminders as $reminder) {
+            $task = Tasks::where('id', $reminder->task_id)->where('user_id', $user->id)->first();
+            if ($task) {
+                $reminderTasks[] = $task;
+            }
+        }
 
         if ($status == 'All' && $sort == 'Added_date') {
 
 
             $tasks = Tasks::where('user_id', $user->id)->orderBy('created_at', $sort_order)->get();
             if ($tasks) {
-                return view('layouts.myLayout', ['data' => $tasks, 'status' => $status]);
+                return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
             } else {
                 return to_route('tasks');
             }
@@ -155,22 +196,23 @@ class TaskController extends Controller
 
             $tasks = Tasks::where('user_id', $user->id)->orderBy('deadline', $sort_order)->get();
             if ($tasks) {
-                return view('layouts.myLayout', ['data' => $tasks, 'status' => $status]);
+                return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
             } else {
                 return to_route('tasks');
             }
         } else {
             if ($sort == 'Added_date') {
                 $tasks = Tasks::where('user_id', $user->id)->where('status', $status)->orderBy('created_at', $sort_order)->get();
+
                 if ($tasks) {
-                    return view('layouts.myLayout', ['data' => $tasks, 'status' => $status]);
+                    return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
                 } else {
                     return to_route('tasks');
                 }
             } else if ($sort == 'Deadline_date') {
                 $tasks = Tasks::where('user_id', $user->id)->where('status', $status)->orderBy('deadline', $sort_order)->get();
                 if ($tasks) {
-                    return view('layouts.myLayout', ['data' => $tasks, 'status' => $status]);
+                    return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
                 } else {
                     return to_route('tasks');
                 }
@@ -182,6 +224,15 @@ class TaskController extends Controller
     {
         $word = $request->input('search');
         $user = Auth::user();
+        $reminders = Reminders::all();
+        $reminderTasks = [];
+
+        foreach ($reminders as $reminder) {
+            $task = Tasks::where('id', $reminder->task_id)->where('user_id', $user->id)->first();
+            if ($task) {
+                $reminderTasks[] = $task;
+            }
+        }
         if ($user != null) {
             $tasks = Tasks::where('user_id', $user->id)->whereLike('title', '%' . $word . '%')->get();
         } else {
@@ -189,7 +240,7 @@ class TaskController extends Controller
         }
         if ($tasks) {
 
-            return view('layouts.myLayout', ['data' => $tasks]);
+            return view('layouts.myLayout', ['data' => $tasks, 'Reminder' => $reminderTasks]);
         }
         return view('layouts.myLayout');
     }

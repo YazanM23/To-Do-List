@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\StorageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,5 +29,7 @@ Route::put('/tasks/{id}/update', [TaskController::class, 'updateTaskDetails'])->
 Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus'])->name('updateStatus');
 Route::get('/filter', [TaskController::class, 'filterTasks'])->name('filter');
 Route::get('/search', [TaskController::class, 'searchTasks'])->name('search');
+Route::post('/tasks/{id}/download', [StorageController::class, 'downloadFile'])->name('download');
+Route::delete('/tasks/{id}/deleteFile', [StorageController::class, 'deleteFile'])->name('deleteFile');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
