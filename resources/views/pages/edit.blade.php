@@ -1,6 +1,6 @@
 @extends('layouts.navbar');
 @section('content')
-<form method="POST" action="{{route('update', $task->id)}}" style="margin-left:1%;margin-top:2%; width:40%;">
+<form method="POST" action="{{route('tasks.update', $task->id)}}" style="margin-left:1%;margin-top:2%; width:40%;">
     @csrf
     @method('PUT')
     <div class="mb-3">

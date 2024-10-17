@@ -19,7 +19,7 @@
                         <div class="pb-2">
                             <div class="card">
                                 <div class="card-body">
-                                    <form id="upload-form" action="{{ route('add') }}" method="POST" enctype="multipart/form-data">
+                                    <form id="upload-form" action="{{ route('tasks.add') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="d-flex flex-row align-items-center" style="width: 100%;">
                                             <div style="width: 100%;">
@@ -76,7 +76,7 @@
                         <ul class="list-group list-group-horizontal rounded-0 bg-transparent">
                             <li class="list-group-item d-flex align-items-center ps-0 pe-3 py-1 rounded-0 border-0 bg-transparent">
                                 <div class="form-check">
-                                    <form action="{{ route('updateStatus', $task->id) }}" method="POST">
+                                    <form action="{{ route('tasks.updateStatus', $task->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <input class="form-check-input me-0" type="checkbox" 
@@ -97,7 +97,7 @@
                                     <a href="tasks/{{ $task->id }}/edit" class="text-info" data-mdb-tooltip-init title="Edit todo">
                                         <i class="fas fa-pencil-alt me-3"></i>
                                     </a>
-                                    <form action="{{ route('delete', $task->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('tasks.delete', $task->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-link text-danger p-0" data-mdb-tooltip-init title="Delete todo">

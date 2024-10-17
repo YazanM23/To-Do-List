@@ -20,13 +20,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/tasks', [TaskController::class, 'getAllTasks'])->name('tasks');
-Route::get('/tasks/{id}/view', [TaskController::class, 'getTaskDetails'])->name('view');
-Route::delete('/tasks/{id}/delete', [TaskController::class, 'deleteTask'])->name('delete');
-Route::post('/tasks', [TaskController::class, 'createTask'])->name('add');
-Route::get('/tasks/{id}/edit', [TaskController::class, 'editTaskDetails'])->name('edit');
-Route::put('/tasks/{id}/update', [TaskController::class, 'updateTaskDetails'])->name('update');
-Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus'])->name('updateStatus');
+Route::get('/tasks', [TaskController::class, 'getAllTasks'])->name('tasks')->middleware('auth');
+Route::get('/tasks/{id}/view', [TaskController::class, 'getTaskDetails'])->name('tasks.view');
+Route::delete('/tasks/{id}/delete', [TaskController::class, 'deleteTask'])->name('tasks.delete');
+Route::post('/tasks', [TaskController::class, 'createTask'])->name('tasks.add');
+Route::get('/tasks/{id}/edit', [TaskController::class, 'editTaskDetails'])->name('tasks.edit');
+Route::put('/tasks/{id}/update', [TaskController::class, 'updateTaskDetails'])->name('tasks.update');
+Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
 Route::get('/filter', [TaskController::class, 'filterTasks'])->name('filter');
 Route::get('/search', [TaskController::class, 'searchTasks'])->name('search');
 Route::post('/tasks/{id}/download', [StorageController::class, 'downloadFile'])->name('download');

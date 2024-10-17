@@ -24,7 +24,7 @@ class StorageController extends Controller
         $task->file_type = null;
         $task->save();
         Storage::delete($file);
-        return to_route('edit', ['id' => $id]);
+        return to_route('tasks.edit', ['id' => $id]);
     }
     function getPhoto($path)
     {

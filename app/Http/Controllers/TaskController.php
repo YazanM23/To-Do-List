@@ -143,7 +143,7 @@ class TaskController extends Controller
             return to_route('tasks');
         }
 
-        return to_route('edit', $id);
+        return to_route('tasks.edit', $id);
     }
     public function updateStatus($id)
     {
