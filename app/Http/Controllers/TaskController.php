@@ -8,7 +8,7 @@ use App\Models\Reminders;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use App\Events\TaskCreated;
 use View;
 use function Laravel\Prompts\error;
 
@@ -71,7 +71,9 @@ class TaskController extends Controller
             if ($reminder) {
                 $reminder->delete();
             }
+            $title = $task->title;
 
+            event(new TaskCreated($title . "is deleted"));
             $task->delete();
         }
         return to_route('tasks');
@@ -113,6 +115,7 @@ class TaskController extends Controller
                 $task->file_type = $fileExtension;
             }
             $task->save();
+            event(new TaskCreated($task));
         }
         return to_route('tasks');
     }
@@ -124,6 +127,7 @@ class TaskController extends Controller
         if ($task) {
             $user = Auth::user();
             $userInfo = User::where('id', $user->id)->first();
+
 
             return view('pages.edit', ['task' => $task, 'user' => $userInfo]);
         }
@@ -140,6 +144,7 @@ class TaskController extends Controller
                 $task->deadline = \Carbon\Carbon::createFromFormat('d/m/Y', request()->picker)->format('Y-m-d');
             }
             $task->save();
+            event(new TaskCreated($task));
             return to_route('tasks');
         }
 
@@ -155,6 +160,7 @@ class TaskController extends Controller
                 $task->completed_at = \Carbon\Carbon::now();
             } else {
                 $task->status = 'Pending';
+                $task->completed_at = null;
             }
 
             $task->save();

@@ -31,5 +31,8 @@ Route::get('/filter', [TaskController::class, 'filterTasks'])->name('filter');
 Route::get('/search', [TaskController::class, 'searchTasks'])->name('search');
 Route::post('/tasks/{id}/download', [StorageController::class, 'downloadFile'])->name('download');
 Route::delete('/tasks/{id}/deleteFile', [StorageController::class, 'deleteFile'])->name('deleteFile');
+Route::get('/index', function () {
+    return view('pages.index');
+});
 
 require __DIR__ . '/auth.php';
