@@ -70,56 +70,50 @@
                                 </a>
                             </form>
                         </div>
+                      
 
-
+                    
                         @foreach ($data as $task)
-                        <ul class="list-group list-group-horizontal rounded-0 bg-transparent">
-                            <li class="list-group-item d-flex align-items-center ps-0 pe-3 py-1 rounded-0 border-0 bg-transparent">
-                                <div class="form-check">
-                                    <form action="{{ route('tasks.updateStatus', $task->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <input class="form-check-input me-0" type="checkbox" 
-                                               onchange="this.form.submit()" 
-                                               {{ $task->status == 'Completed' ? 'checked' : '' }} 
-                                               aria-label="..." />
-                                    </form>
-                                </div>
-                            </li>
-                            <li class="list-group-item px-3 py-1 d-flex align-items-center flex-grow-1 border-0 bg-transparent">
-                                <p class="lead fw-normal mb-0">{{ $task->title }}</p>
-                            </li>
-                            <li class="list-group-item ps-3 pe-0 py-1 rounded-0 border-0 bg-transparent">
-                                <div class="d-flex flex-row justify-content-end mb-1">
-                                    <a href="tasks/{{ $task->id }}/view" class="text-info" data-mdb-tooltip-init title="View todo" style="margin-right: 10px;">
-                                        <i class="fa-solid fa-eye" style="color: black"></i>
-                                    </a>
-                                    <a href="tasks/{{ $task->id }}/edit" class="text-info" data-mdb-tooltip-init title="Edit todo">
-                                        <i class="fas fa-pencil-alt me-3"></i>
-                                    </a>
-                                    <form action="{{ route('tasks.delete', $task->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link text-danger p-0" data-mdb-tooltip-init title="Delete todo">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="text-end text-muted">
-                                    <a href="#!" class="text-muted" data-mdb-tooltip-init title="Created date">
-                                        <p class="small mb-0"><i class="fas fa-info-circle me-2"></i>{{ $task->deadline }}</p>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-
-                        @if (\Carbon\Carbon::now()->format('Y-m-d') == \Carbon\Carbon::parse($task->deadline)->format('Y-m-d'))
-                            <div class="alert alert-warning mt-2" style="font-weight: bold; color: red;">
-                                Reminder: The deadline for this task is today!
-                            </div>
-                        @endif
-
-                        @endforeach
+    <ul class="list-group list-group-horizontal rounded-0 bg-transparent">
+        <li class="list-group-item d-flex align-items-center ps-0 pe-3 py-1 rounded-0 border-0 bg-transparent">
+            <div class="form-check">
+                <form action="{{ route('tasks.updateStatus', $task->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input class="form-check-input me-0" type="checkbox" 
+                           onchange="this.form.submit()" 
+                           {{ $task->status == 'Completed' ? 'checked' : '' }} 
+                           aria-label="..." />
+                </form>
+            </div>
+        </li>
+        <li class="list-group-item px-3 py-1 d-flex align-items-center flex-grow-1 border-0 bg-transparent">
+            <p class="lead fw-normal mb-0">{{ $task->title }}</p>
+        </li>
+        <li class="list-group-item ps-3 pe-0 py-1 rounded-0 border-0 bg-transparent">
+            <div class="d-flex flex-row justify-content-end mb-1">
+                <a href="tasks/{{ $task->id }}/view" class="text-info" data-mdb-tooltip-init title="View todo" style="margin-right: 10px;">
+                    <i class="fa-solid fa-eye" style="color: black"></i>
+                </a>
+                <a href="tasks/{{ $task->id }}/edit" class="text-info" data-mdb-tooltip-init title="Edit todo">
+                    <i class="fas fa-pencil-alt me-3"></i>
+                </a>
+                <form action="{{ route('tasks.delete', $task->id) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-link text-danger p-0" data-mdb-tooltip-init title="Delete todo">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="text-end text-muted">
+                <a href="#!" class="text-muted" data-mdb-tooltip-init title="Created date">
+                    <p class="small mb-0"><i class="fas fa-info-circle me-2"></i>{{ $task->deadline }}</p>
+                </a>
+            </div>
+        </li>
+    </ul>
+@endforeach
                     </div>
                 </div>
             </div>
@@ -191,4 +185,62 @@
   }
 
 </script>
+@endsection
+@section('pagination')
+<div class="d-flex justify-content-center mt-4">
+    {{ $data->links() }} 
+</div>
+    <style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #fff;
+
+        list-style-type: none;
+    }
+    
+    .pagination__numbers,
+    .pagination__btn,
+    .pagination__dots {
+        margin: 0 5px;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #eff1f2;
+        color: var(--greyDark);
+        transition: background-color 0.3s ease;
+    }
+    
+    .pagination__numbers.active {
+        background-color: #23adad;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .pagination__btn i {
+        color: var(--greyDark);
+    }
+    
+    .pagination__btn.disabled i {
+        color: #cbe0dd; /* Lighter for disabled state */
+        cursor: not-allowed;
+    }
+    
+    .pagination__numbers:hover,
+    .pagination__btn:hover i {
+        background-color: #23adad;
+        color: white;
+    }
+    
+    .pagination__dots {
+        pointer-events: none;
+        color: var(--greyLight);
+    }
+    
+
+    </style>
 @endsection

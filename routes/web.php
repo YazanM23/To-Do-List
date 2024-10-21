@@ -35,4 +35,5 @@ Route::get('/index', function () {
     return view('pages.index');
 });
 
+
 require __DIR__ . '/auth.php';

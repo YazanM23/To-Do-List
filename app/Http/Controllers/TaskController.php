@@ -17,31 +17,36 @@ class TaskController extends Controller
     //
     function getAllTasks()
     {
-
         $user = Auth::user();
-        if ($user != null) {
-            $tasks = Tasks::where('user_id', $user->id)->get();
-        } else {
+
+        if ($user == null) {
             return response()->json(['error' => 'Please Login']);
         }
+
+        $tasks = Tasks::where('user_id', $user->id)->paginate(5);
 
         if ($tasks) {
             $reminders = Reminders::all();
             $reminderTasks = [];
 
             foreach ($reminders as $reminder) {
-                $task = Tasks::where('id', $reminder->task_id)->where('user_id', $user->id)->first();
+                $task = Tasks::where('id', $reminder->task_id)
+                    ->where('user_id', $user->id)
+                    ->first();
                 if ($task) {
                     $reminderTasks[] = $task;
                 }
             }
 
-            return view('layouts.myLayout', ['data' => $tasks, 'Reminder' => $reminderTasks]);
+            return view('layouts.myLayout', [
+                'data' => $tasks,
+                'Reminder' => $reminderTasks
+            ]);
         }
-
 
         return view('layouts.myLayout');
     }
+
 
     function getTaskDetails($id)
     {
@@ -117,7 +122,7 @@ class TaskController extends Controller
             $task->save();
             event(new TaskCreated($task));
         }
-        return to_route('tasks');
+        return to_route('tasks', 1);
     }
 
 
@@ -145,7 +150,7 @@ class TaskController extends Controller
             }
             $task->save();
             event(new TaskCreated($task));
-            return to_route('tasks');
+            return to_route('tasks', 1);
         }
 
         return to_route('tasks.edit', $id);
@@ -191,7 +196,7 @@ class TaskController extends Controller
         if ($status == 'All' && $sort == 'Added_date') {
 
 
-            $tasks = Tasks::where('user_id', $user->id)->orderBy('created_at', $sort_order)->get();
+            $tasks = Tasks::where('user_id', $user->id)->orderBy('created_at', $sort_order)->paginate(5);
             if ($tasks) {
                 return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
             } else {
@@ -200,7 +205,7 @@ class TaskController extends Controller
         } else  if ($status == 'All' && $sort == 'Deadline_date') {
 
 
-            $tasks = Tasks::where('user_id', $user->id)->orderBy('deadline', $sort_order)->get();
+            $tasks = Tasks::where('user_id', $user->id)->orderBy('deadline', $sort_order)->paginate(5);
             if ($tasks) {
                 return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
             } else {
@@ -208,7 +213,7 @@ class TaskController extends Controller
             }
         } else {
             if ($sort == 'Added_date') {
-                $tasks = Tasks::where('user_id', $user->id)->where('status', $status)->orderBy('created_at', $sort_order)->get();
+                $tasks = Tasks::where('user_id', $user->id)->where('status', $status)->orderBy('created_at', $sort_order)->paginate(5);
 
                 if ($tasks) {
                     return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
@@ -216,7 +221,7 @@ class TaskController extends Controller
                     return to_route('tasks');
                 }
             } else if ($sort == 'Deadline_date') {
-                $tasks = Tasks::where('user_id', $user->id)->where('status', $status)->orderBy('deadline', $sort_order)->get();
+                $tasks = Tasks::where('user_id', $user->id)->where('status', $status)->orderBy('deadline', $sort_order)->paginate(5);
                 if ($tasks) {
                     return view('layouts.myLayout', ['data' => $tasks, 'status' => $status, 'Reminder' => $reminderTasks]);
                 } else {
