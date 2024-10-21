@@ -245,7 +245,7 @@ class TaskController extends Controller
             }
         }
         if ($user != null) {
-            $tasks = Tasks::where('user_id', $user->id)->whereLike('title', '%' . $word . '%')->get();
+            $tasks = Tasks::where('user_id', $user->id)->whereLike('title', '%' . $word . '%')->paginate(5);
         } else {
             return error('Please Login');
         }
