@@ -29,7 +29,7 @@
                                             
                                                 <textarea class="form-control form-control-lg" name="description" id="exampleFormControlTextarea1" placeholder="Description..." rows="2"></textarea><br>
                                             
-                                                <input type="file" id="idFile" name="file" accept=".jpg,.jpeg,.png,.pdf,.docx" onchange="validationCheck()">
+                                                <input type="file" id="idFile" name="file" accept=".jpg,.jpeg,.png,.pdf,.docx,.xlsx" onchange="validationCheck()">
                                                 <label id="statusLabel"></label>
                                             </div>
                                             
@@ -43,6 +43,10 @@
                                             </div>
                                         </div>
                                     </form>
+                                    <br>
+<form action="{{route('export')}}" method="GET">
+    <button type="submit" class="btn btn-primary">Export</button>
+</form>
                                 </div>
                             </div>
                         </div>
@@ -114,14 +118,18 @@
         </li>
     </ul>
 @endforeach
+
                     </div>
+                  
                 </div>
             </div>
         </div>
     </div>
+   
 </section>
-
-
+<br>
+<br>
+<br>
 <script>
     document.getElementById('toggleSort').addEventListener('click', function (event) {
         event.preventDefault();
@@ -185,6 +193,7 @@
   }
 
 </script>
+
 @endsection
 @section('pagination')
 <div class="d-flex justify-content-center mt-4">

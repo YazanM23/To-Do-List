@@ -53,6 +53,9 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{route('tasks',1)}}">All Tasks</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{{route('dashboard')}}">Dashboard</a>
+              </li>
             </ul>
 
             <form class="d-flex" method="GET" action="{{route('search')}}">

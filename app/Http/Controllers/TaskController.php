@@ -9,8 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Events\TaskCreated;
+use App\Events\CreateTask;
+use App\Events\UpdatedTask;
 use View;
 use function Laravel\Prompts\error;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
 
 class TaskController extends Controller
 {
@@ -109,18 +114,27 @@ class TaskController extends Controller
 
                     try {
                         $request->validate([
-                            'file' => 'required|file|mimes:pdf,docx|max:2048'
+                            'file' => 'required|file|mimes:pdf,docx,xlsx|max:2048'
                         ]);
                     } catch (\Illuminate\Validation\ValidationException $e) {
                         @dd(ini_get(option: 'upload_max_filesize'), ini_get('post_max_size'));
                     }
                 }
+
+
+                if ($fileExtension == 'xlsx') {
+                    Excel::import(new UsersImport, $filereq);
+                }
+
+
                 $filesStorage =  Storage::putFile('myStorage', $filereq);
+
                 $task->files = $filesStorage;
                 $task->file_type = $fileExtension;
             }
             $task->save();
-            event(new TaskCreated($task));
+            //event(new TaskCreated($task));
+            event(new CreateTask(Auth::user()));
         }
         return to_route('tasks', 1);
     }
@@ -149,7 +163,8 @@ class TaskController extends Controller
                 $task->deadline = \Carbon\Carbon::createFromFormat('d/m/Y', request()->picker)->format('Y-m-d');
             }
             $task->save();
-            event(new TaskCreated($task));
+            //event(new TaskCreated($task));
+            event(new UpdatedTask(Auth::user()));
             return to_route('tasks', 1);
         }
 
@@ -231,6 +246,7 @@ class TaskController extends Controller
         }
     }
 
+
     function searchTasks(Request $request)
     {
         $word = $request->input('search');
@@ -254,5 +270,9 @@ class TaskController extends Controller
             return view('layouts.myLayout', ['data' => $tasks, 'Reminder' => $reminderTasks]);
         }
         return view('layouts.myLayout');
+    }
+    public function export()
+    {
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 }

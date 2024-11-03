@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\StorageController;
+use App\Http\Controllers\UserlogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +35,9 @@ Route::delete('/tasks/{id}/deleteFile', [StorageController::class, 'deleteFile']
 Route::get('/index', function () {
     return view('pages.index');
 });
+Route::get('/export', [TaskController::class, 'export'])->name('export');
 
+Route::get('/tasks/dashboard', [UserlogController::class, 'viewInformations'])->name('dashboard')->middleware('auth');
+Route::get('/tasks/dashboard/filter', [UserlogController::class, 'filterLogs'])->name('dashboardFilter');
 
 require __DIR__ . '/auth.php';
