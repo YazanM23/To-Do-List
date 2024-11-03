@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Events\TaskCreated;
+use App\Events\Created;
 use App\Events\CreateTask;
 use App\Events\UpdatedTask;
+use App\Events\Updated;
+use App\Events\Deleted;
 use View;
 use function Laravel\Prompts\error;
 use App\Imports\UsersImport;
@@ -77,6 +80,7 @@ class TaskController extends Controller
     {
         $task = Tasks::where('id', $id)->first();
         if ($task) {
+            event(new Deleted($task));
             $reminder = Reminders::where('task_id', $task->id);
             if ($reminder) {
                 $reminder->delete();
@@ -92,6 +96,7 @@ class TaskController extends Controller
 
     function createTask(Request $request)
     {
+
         if ($request->input('title') != null  && $request->picker != null) {
             $task = new Tasks();
 
@@ -135,6 +140,7 @@ class TaskController extends Controller
             $task->save();
             //event(new TaskCreated($task));
             event(new CreateTask(Auth::user()));
+            event(new Created($task));
         }
         return to_route('tasks', 1);
     }
@@ -156,12 +162,14 @@ class TaskController extends Controller
     {
         if (request()->title != null  && request()->status != null) {
             $task = Tasks::where('id', $id)->first();
+            event(new Updated($task, request()));
             $task->title = request()->title;
             $task->description = request()->description;
             $task->status = request()->status;
             if (request()->picker) {
                 $task->deadline = \Carbon\Carbon::createFromFormat('d/m/Y', request()->picker)->format('Y-m-d');
             }
+
             $task->save();
             //event(new TaskCreated($task));
             event(new UpdatedTask(Auth::user()));
